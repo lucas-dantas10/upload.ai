@@ -1,30 +1,26 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { Button } from './components/ui/button';
+import { Separator } from './components/ui/separator';
+import { Github } from 'lucide-vue-next';
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+    <div>
+        <header class="px-4 py-3 flex items-center justify-between border-b">
+            <h1 class="text-xl font-bold">upload.io</h1>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-muted-foreground">
+                    Desenvolvido com 💗 no NLW
+                </span>
+
+                <Separator orientation="vertical" class="h-6" />
+
+                <Button variant="outline">
+                    <Github class="w-4 h-4 mr-2" />
+                    Github
+                </Button>
+            </div>
+        </header>
+    </div>
+</template>
