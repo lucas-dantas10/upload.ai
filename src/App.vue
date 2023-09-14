@@ -11,20 +11,8 @@ import PromptSelect from './components/PromptSelect.vue';
 import { useCompletion } from 'ai/vue';
 import {  ref } from 'vue';
 
-// const currentValue = [0.5];
-
 const temperature = ref([0.5]);
-const videoId = ref<string | null>('');
-
-
-// const videoId = computed(() => {
-//     return valueVideoId.value
-// })
-
-// const temperature = computed(() => {
-//     return temperatureValue.value;
-// })
-
+const videoId = ref('');
 const {
     input,
     completion,
@@ -33,13 +21,14 @@ const {
 } = useCompletion({
   api: 'http://localhost:3333/ai/complete',
   body: {
-    videoId,
-    temperature,
+    videoId: videoId.value,
+    temperature: temperature.value[0],
   },
   headers: {
     'Content-Type': 'application/json',
   }
 });
+
 
 function handlePromptsSelected(template: string) {
     input.value = template;
