@@ -2,13 +2,52 @@
 import { Button } from './components/ui/button';
 import { Label } from './components/ui/label';
 import { Slider } from './components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectGroup, SelectValue } from './components/ui/select';
 import { Separator } from './components/ui/separator';
 import { Textarea } from './components/ui/textarea';
 import { Github, Wand2 } from 'lucide-vue-next';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectGroup, SelectValue } from './components/ui/select';
 import VideoInputForm from './components/VideoInputForm.vue';
+import PromptSelect from './components/PromptSelect.vue';
+import { useCompletion } from 'ai/vue';
+import {  ref } from 'vue';
 
-const currentValue = [0.5];
+// const currentValue = [0.5];
+
+const temperature = ref([0.5]);
+const videoId = ref<string | null>('');
+
+
+// const videoId = computed(() => {
+//     return valueVideoId.value
+// })
+
+// const temperature = computed(() => {
+//     return temperatureValue.value;
+// })
+
+const {
+    input,
+    completion,
+    handleSubmit,
+    isLoading,
+} = useCompletion({
+  api: 'http://localhost:3333/ai/complete',
+  body: {
+    videoId,
+    temperature,
+  },
+  headers: {
+    'Content-Type': 'application/json',
+  }
+});
+
+function handlePromptsSelected(template: string) {
+    input.value = template;
+}
+
+function setVideoId(idVideo: string) {
+    videoId.value = idVideo;
+}
 </script>
 
 <template>
@@ -36,10 +75,13 @@ const currentValue = [0.5];
                     <Textarea 
                         class="resize-none p-4 leading-relaxed"
                         placeholder="Inclua o prompt para a IA..." 
+                        v-model="input"
                     /> 
                     <Textarea 
                         class="resize-none p-4 leading-relaxed"
-                        placeholder="Resultado gerado pela IA..." readonly 
+                        placeholder="Resultado gerado pela IA..." 
+                        readonly
+                        v-model="completion"
                     />
                 </div>
 
@@ -49,25 +91,16 @@ const currentValue = [0.5];
             </section>
 
             <aside class="w-80 space-y-6">
-                <VideoInputForm />
+                <VideoInputForm @onVideoUploaded="setVideoId" />
 
                 <Separator />
 
-                <form class="space-y-4">
+                <form @submit="handleSubmit" class="space-y-4">
                     <div class="space-y-2">
                         <Label>Prompt</Label>
-                        <Select>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Selecione um prompt..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value="Título do Youtube">Título do Youtube</SelectItem>
-                                    <SelectItem value="Desrição do Youtube">Desrição do Youtube</SelectItem>
-                                </SelectGroup>
-                                
-                            </SelectContent>
-                        </Select>
+                        <PromptSelect 
+                            @onPromptSelected="handlePromptsSelected"
+                        />
                     </div>
 
                     <div class="space-y-2">
@@ -97,7 +130,7 @@ const currentValue = [0.5];
                             :min="0"
                             :max="1"
                             :step="0.1"
-                            v-model="currentValue"
+                            v-model="temperature"
                         />
 
                         <span class="block text-sm text-muted-foreground leading-relaxed">Valores mais altos tendem a deixar os resultados mais criativos e com possíveis erros</span>
@@ -105,7 +138,7 @@ const currentValue = [0.5];
 
                     <Separator />
 
-                    <Button type="submit" class="w-full">
+                    <Button :disabled="isLoading" type="submit" class="w-full">
                         Executar
                         <Wand2 class="w-4 h-4 ml-2" />
                     </Button>
