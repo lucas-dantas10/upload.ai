@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { FileVideo } from 'lucide-vue-next';
 import { Button } from './components/ui/button';
 import { Label } from './components/ui/label';
 import { Slider } from './components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectGroup, SelectValue } from './components/ui/select';
 import { Separator } from './components/ui/separator';
 import { Textarea } from './components/ui/textarea';
-import { Github, Upload, Wand2 } from 'lucide-vue-next';
+import { Github, Wand2 } from 'lucide-vue-next';
+import VideoInputForm from './components/VideoInputForm.vue';
 
 const currentValue = [0.5];
 </script>
@@ -49,36 +49,7 @@ const currentValue = [0.5];
             </section>
 
             <aside class="w-80 space-y-6">
-                <form class="space-y-4">
-                    <label 
-                        for="video"
-                        class="border flex rounded-md aspect-video cursor-pointer border-dashed text-sm flex-col gap-2 justify-center items-center text-muted-foreground hover:bg-primary/5" 
-                    >
-                        <FileVideo class="w-4 h-4" />
-                        Selecione um vídeo
-                    </label>
-
-                    <input type="file" id="video" accept="video/mp4" class="sr-only">
-
-                    <Separator  />
-
-                    <div class="space-y-2">
-                        <Label for="transcription_prompt">
-                            Prompt de transcrição
-                        </Label>
-
-                        <Textarea 
-                            id="transcription_prompt"
-                            class="h-20 leading-relaxed resize-none"
-                            placeholder="Inclua palavras chaves mencionadas no vídeo separadas por vírgula {,}"
-                        />
-                    </div>
-
-                    <Button type="submit" class="w-full">
-                        Carregar vídeo
-                        <Upload class="w-4 h-4 ml-2" />
-                    </Button>
-                </form>
+                <VideoInputForm />
 
                 <Separator />
 
