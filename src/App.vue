@@ -10,25 +10,44 @@ import VideoInputForm from './components/VideoInputForm.vue';
 import PromptSelect from './components/PromptSelect.vue';
 import { useCompletion } from 'ai/vue';
 import {  ref } from 'vue';
+import { api } from  '@/lib/axios.ts';
 
 const temperature = ref([0.5]);
-const videoId = ref('');
+const videoId = ref<string | null>(null);
+
 const {
     input,
     completion,
-    handleSubmit,
+    // handleSubmit,
     isLoading,
 } = useCompletion({
-  api: 'http://localhost:3333/ai/complete',
-  body: {
-    videoId: videoId.value,
-    temperature: temperature.value[0],
-  },
-  headers: {
-    'Content-Type': 'application/json',
-  }
+    api: 'http://localhost:3333/ai/complete',
+    body: {
+        videoId: videoId.value,
+        temperature: temperature.value[0],
+    },
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
+async function handleSubmitForm() {
+    try {
+        const response = await api.post('http://localhost:3333/ai/complete', {
+            videoId: videoId.value,
+            temperature: temperature.value[0],
+            prompt: input.value
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        completion.value = response.data;
+    } catch(error) {
+        console.error("Error sending request... + ", error);
+    }
+}
 
 function handlePromptsSelected(template: string) {
     input.value = template;
@@ -84,7 +103,7 @@ function setVideoId(idVideo: string) {
 
                 <Separator />
 
-                <form @submit="handleSubmit" class="space-y-4">
+                <form @submit.prevent="handleSubmitForm" class="space-y-4">
                     <div class="space-y-2">
                         <Label>Prompt</Label>
                         <PromptSelect 
@@ -120,6 +139,7 @@ function setVideoId(idVideo: string) {
                             :max="1"
                             :step="0.1"
                             v-model="temperature"
+                            
                         />
 
                         <span class="block text-sm text-muted-foreground leading-relaxed">Valores mais altos tendem a deixar os resultados mais criativos e com possíveis erros</span>
